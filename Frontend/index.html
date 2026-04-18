@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Extraction Portal from PDF Invoices</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Main Styles -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body>
+    <div class="background-animation"></div>
+
+    <main class="container">
+        <header class="header">
+            <div class="logo">
+                <i class="ph ph-heartbeat logo-icon"></i>
+                <h1>Data Extraction Portal</h1>
+            </div>
+            <p class="subtitle">Extract the necessary data from your invoices using OCR Services.</p>
+        </header>
+
+        <div class="action-grid">
+            <!-- Option 1: Submit ID -->
+            <section class="action-card glass-panel" id="id-submit-card">
+                <div class="card-header">
+                    <div class="icon-wrapper">
+                        <i class="ph ph-identification-card"></i>
+                    </div>
+                    <h2>Submit ID</h2>
+                </div>
+                <p>Enter your unique identification number to securely register it in the database.</p>
+                
+                <form id="id-form" class="input-form">
+                    <div class="input-group">
+                        <i class="ph ph-keyboard"></i>
+                        <input type="text" id="user-id" placeholder="e.g. 123-456-789" required autocomplete="off">
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="btn-submit">
+                        <span>Save ID</span>
+                        <i class="ph ph-floppy-disk"></i>
+                    </button>
+                </form>
+            </section>
+
+            <!-- Option 2: Upload PDF -->
+            <section class="action-card glass-panel" id="pdf-upload-card">
+                <div class="card-header">
+                    <div class="icon-wrapper secondary">
+                        <i class="ph ph-file-pdf"></i>
+                    </div>
+                    <h2>Upload PDF</h2>
+                </div>
+                <p>Upload a new medical PDF. It will be stored in AWS S3, processed, and saved to the database.</p>
+
+                <div class="upload-zone" id="drop-zone">
+                    <input type="file" id="file-input" accept="application/pdf" hidden>
+                    <i class="ph ph-cloud-arrow-up upload-icon"></i>
+                    <p class="upload-text">Drag & drop your PDF here or <span class="browse-link" id="browse-btn">browse files</span></p>
+                    <p class="file-name" id="file-name-display"></p>
+                </div>
+
+                <div class="upload-actions">
+                    <button type="button" class="btn btn-secondary" id="btn-upload" disabled>
+                        <span>Process Document</span>
+                        <i class="ph ph-upload-simple"></i>
+                    </button>
+                </div>
+            </section>
+        </div>
+
+        <!-- Progress Indicator -->
+        <div class="status-container glass-panel hidden" id="status-panel">
+            <div class="spinner-container">
+                <div class="spinner"></div>
+            </div>
+            <p id="status-text">Processing your request...</p>
+        </div>
+
+        <!-- Results Display -->
+        <section class="results-panel glass-panel hidden" id="results-panel">
+            <div class="results-header">
+                <h3><i class="ph ph-database"></i> Extracted Data</h3>
+                <button class="btn-icon" id="btn-close-results" title="Close Results"><i class="ph ph-x"></i></button>
+            </div>
+            <div class="results-content" id="results-content">
+                <!-- Data injected via JS -->
+            </div>
+        </section>
+    </main>
+
+    <!-- App Logic -->
+    <script src="app.js"></script>
+</body>
+</html>

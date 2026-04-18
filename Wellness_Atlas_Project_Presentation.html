@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Wellness Atlas - Project Presentation</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+        .page {
+            max-width: 900px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 60px 80px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-radius: 8px;
+            page-break-after: always;
+        }
+        h1 {
+            color: #2c3e50;
+            font-size: 2.8em;
+            text-align: center;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 15px;
+            margin-bottom: 40px;
+        }
+        h2 {
+            color: #2980b9;
+            font-size: 2em;
+            margin-top: 50px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        h3 {
+            color: #34495e;
+            font-size: 1.5em;
+        }
+        p {
+            font-size: 1.1em;
+            color: #555;
+            text-align: justify;
+        }
+        .highlight-box {
+            background-color: #e8f4f8;
+            border-left: 5px solid #3498db;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .code-snippet {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', Courier, monospace;
+            overflow-x: auto;
+        }
+        ul {
+            font-size: 1.1em;
+            color: #555;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        .footer {
+            text-align: center;
+            font-size: 0.9em;
+            color: #999;
+            margin-top: 50px;
+        }
+        /* Grid for concept breakdowns */
+        .concept-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .concept-card {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            border-left: 5px solid #2ecc71;
+        }
+        .concept-card h4 {
+            margin-top: 0;
+            color: #27ae60;
+            font-size: 1.3em;
+        }
+        @media print {
+            body { background: white; }
+            .page { box-shadow: none; margin: 0; padding: 20px 40px; border-radius: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- PAGE 1: Intro -->
+    <div class="page">
+        <h1>Wellness Atlas <br><span style="font-size: 0.5em; color: #7f8c8d;">Invoice Data Extraction Portal</span></h1>
+        
+        <div class="highlight-box">
+            <strong>Project Objective:</strong> A full-stack web application designed to securely accept user identification, upload medical utility PDF invoices, dynamically extract high-value text logic (Invoice Numbers, Dates, Amounts) using Optical Character Recognition (OCR), and seamlessly store this flow directly into a local MySQL database and AWS S3 object storage.
+        </div>
+
+        <h2>1. The End-to-End Workflow</h2>
+        <p>The system operates in a precise, three-step multi-tier framework, connecting your browser flawlessly to powerful cloud capabilities and local persistence.</p>
+        
+        <ul>
+            <li><strong>Frontend (UI/UX)</strong>: Beautiful Glassmorphism interface capturing raw input. Users submit a unique <code>User ID</code> which gets securely bound to the DBeaver/MySQL instance.</li>
+            <li><strong>File Transport (Upload)</strong>: The user drops a PDF document using drag-and-drop mechanics. This is transported via FormData to the Python backend immediately securely.</li>
+            <li><strong>Backend Extraction (OCR Services)</strong>: The Python backend temporarily caches the PDF, safely uploads it to an <code>AWS S3 Bucket</code> via `Boto3`, and feeds the file into <code>pdfplumber</code> and <code>pytesseract</code> image-to-text parsers. Smart Regular Expressions hunt down key data points regardless of how unstructured the text is!</li>
+            <li><strong>Persistence (Database)</strong>: High-value tokens (Invoice Number, Date, Amount) are written deeply into the `invoices` table against the specific User ID via raw parametrised SQL executions.</li>
+            <li><strong>Real-time Modification (Manual Overrides)</strong>: The system bounces the parsed values back to the UI into perfectly styled text fields. If OCR has a strict failure, the user types changes, hits "Save", and the backend fires a PUT request, silently rewriting that specific row ID with absolute precision.</li>
+        </ul>
+    </div>
+
+    <!-- PAGE 2: Architecture Layers -->
+    <div class="page">
+        <h2>2. FastAPI Refactored Architecture</h2>
+        <p>The backend was massively upgraded from standard Flask routing into a highly reliable <strong>FastAPI layered architecture</strong> (specifically inspired by industry-standard Python Enterprise design templates like `customer_service` patterns). By separating concerns, our application becomes highly testable, extremely decoupled, and readable.</p>
+
+        <div class="concept-grid">
+            
+            <div class="concept-card" style="border-left-color: #e74c3c;">
+                <h4 style="color: #c0392b;">core/ The Configuration Layer</h4>
+                <p>This folder acts as the central hub for Environment definitions. The <code>config.py</code> securely exposes constants across the application globally (like <code>AWS_ACCESS_KEY</code>, <code>DB_HOST</code>). It completely removes hardcoded passwords from the actual operations, making it CI/CD ready.</p>
+            </div>
+
+            <div class="concept-card" style="border-left-color: #3498db;">
+                <h4 style="color: #2980b9;">db/ The Session Layer</h4>
+                <p><code>session.py</code> handles database hydration. Here we execute <code>initialize_db()</code> which builds our <code>users</code> and <code>invoices</code> schemas automatically, and we provide <code>get_db_connection()</code> generators so endpoints don't have to write raw PyMySQL connection loops.</p>
+            </div>
+
+            <div class="concept-card" style="border-left-color: #f1c40f;">
+                <h4 style="color: #f39c12;">services/ The Business Logic Layer</h4>
+                <p>All OCR and Regex brainpower lives in <code>ocr_service.py</code>. By confining <code>pdfplumber</code> here, the API routes remain shockingly clean. Services represent "how" something is done (the brain), whereas APIs just ask the service for the answer.</p>
+            </div>
+
+            <div class="concept-card" style="border-left-color: #9b59b6;">
+                <h4 style="color: #8e44ad;">api/ The Endpoints Layer</h4>
+                <p>Nested deeply in <code>api/v1/endpoints/invoices.py</code>, we utilize FastAPI's <code>APIRouter()</code>. These functions merely validate incoming traffic from <code>app.js</code>, pass the traffic to the Services, grab the computed string mapping, and shoot back JSON.</p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- PAGE 3: Models vs Schemas -->
+    <div class="page">
+        <h2>3. Models vs Schemas (The Deep Dive)</h2>
+        <p>In enterprise-grade FastAPI, specifically in SQLAlchemy/Pydantic ecosystems, we drastically separate <strong>Database representations</strong> from <strong>JSON representations</strong>. This duality is critical for security.</p>
+        
+        <h3>What are Models?</h3>
+        <p>Models are pure representations of your database tables defined in python code (usually extending <code>Base</code> in SQLAlchemy). In Wellness Atlas, our model equivalents are the strict raw SQL tables defined directly in <code>db/session.py</code> (e.g. <code>CREATE TABLE invoices (...)</code>). Models dictate exclusively how data rests on the physical Disk/DBeaver schema.</p>
+
+        <h3>What are Schemas?</h3>
+        <p>Schemas (located in <code>schemas/invoice.py</code>) are <strong>Pydantic Data Guards</strong> representing how data travels over the Internet via JSON. They have strictly nothing to do with the disk!</p>
+        
+        <div class="code-snippet">
+class SubmitIdRequest(BaseModel):
+    id: str  # FastAPI will throw a 422 Error automatically if standard JSON lacks this key!
+        </div>
+        
+        <p><strong>Why separate them?</strong> You never want users submitting a JSON payload directly into your DB Model (Model injection attacks). By forcing traffic through a Schema first, Pydantic strips out illegal variables magically. In our implementation, functions like <code>submit_id(req: SubmitIdRequest)</code> guarantee the input is perfectly typed before it ever touches `session.py`!</p>
+
+        <div class="footer">
+            Final Generation - Wellness Atlas Project Documentation
+        </div>
+    </div>
+
+</body>
+</html>
